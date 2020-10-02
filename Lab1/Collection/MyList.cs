@@ -127,7 +127,9 @@ namespace Collection
             if (count == Capacity)
                 Expand();
 
-            for(int i = items.Length+ 1; i>=index; i--)
+            count++;
+
+            for(int i = count; i>=index; i--)
             {
                 items[i + 1] = items[i];
             }
