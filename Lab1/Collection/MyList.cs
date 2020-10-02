@@ -12,15 +12,28 @@ namespace Collection
         public int Capacity { get; set; }
         public int Count { get => count; }
 
-        private T[] items;     
+        private T[] items;   
         private int count;
         private const int expandingValue = 2;
-       
-
+      
 
         public bool IsReadOnly => throw new NotImplementedException();
 
-        public T this[int index] { get => items[index]; set => throw new NotImplementedException(); }
+        public T this[int index]
+        { 
+            get 
+            {   
+                if (index < 0 || index > count)
+                    throw new ArgumentOutOfRangeException();
+                return items[index];
+            }
+            set 
+            { 
+                if (index < 0 || index >= count)
+                    throw new ArgumentOutOfRangeException();
+                items[index] = value;
+            } 
+        }
 
         public MyList()
         {
