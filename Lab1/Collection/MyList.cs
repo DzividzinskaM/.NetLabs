@@ -14,8 +14,7 @@ namespace Collection
 
         private T[] items;   
         private int count;
-        private const int expandingValue = 2;
-      
+        private const int expandingValue = 2;   
 
         public bool IsReadOnly => throw new NotImplementedException();
 
@@ -117,7 +116,6 @@ namespace Collection
             }
         }
 
-
         public void CopyTo(int index, T[] array, int arrayIndex, int count)
         {
             if(array == null)
@@ -135,6 +133,7 @@ namespace Collection
                 count--;
             }
         }
+
         public bool Remove(T item)
         {
             for(int i=0; i<items.Length; i++)
@@ -150,8 +149,7 @@ namespace Collection
                 }
             }
             return false;
-        }
-            
+        }        
      
         public int IndexOf(T item)
         {
@@ -206,5 +204,93 @@ namespace Collection
             return ((IEnumerable)this).GetEnumerator();
         }
 
+
+/*        public delegate void RemovingHandler(int index);
+        public event RemovingHandler removeItem;*/
+
+        public delegate void AddingHandler(int index, T item);
+        public event AddingHandler addItem;
+
+/*        private void checkIndex(int index)
+        {
+            if (index < 0 || index > Count)
+                throw new ArgumentOutOfRangeException();
+        }
+        private void RemoveElement(int index)
+        {
+            for (int i = index; i < items.Length - 1; i++)
+            {
+                items[i] = items[i + 1];
+            }
+        }
+        private void CountReduce(int index)
+        {
+            count--;
+        }*/
+
+
+        private void checkIndex(int index, T item)
+        {
+            if (index < 0 || index > Count)
+                throw new ArgumentOutOfRangeException();
+        }
+        private void checkExpand(int index, T item)
+        {
+            if (count == Capacity)
+                Expand();
+        }
+        private void AddElement(int index, T item)
+        {
+            for (int i = count; i >= index; i--)
+            {
+                items[i + 1] = items[i];
+            }
+            items[index] = item;
+        }
+        private void CountExpanse(int index, T item)
+        {
+            count++;
+        }
+
+/*
+        public void RemoveEvent(int index, T item = default(T))
+        {
+            Console.WriteLine(item);
+            if(removeItem == null)
+            {
+                removeItem += checkIndex;
+                removeItem += RemoveElement;
+                removeItem += CountReduce;
+            }
+            
+            removeItem(index);
+        }*/
+
+        public void AddEvent(T item, int index = -1)
+        {
+            addItem = null;
+            if(index != -1)
+            {
+                addItem += checkIndex;
+                addItem += checkExpand;
+                addItem += AddElement;
+                addItem += CountExpanse;
+
+                addItem(index, item);
+            }
+            else
+            {
+                addItem += checkExpand;
+                addItem += AddElement;
+                addItem += CountExpanse;
+
+                addItem(count, item);
+            }
+
+            
+
+        }
+
     }
+   
 }
