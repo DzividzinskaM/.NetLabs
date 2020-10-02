@@ -104,6 +104,37 @@ namespace Collection
            
         }
 
+        public void CopyTo(T[] array)
+        {
+            if (array == null)
+                throw new ArgumentNullException();
+            if (count > array.Length)
+                throw new ArgumentException();
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = items[i];
+            }
+        }
+
+
+        public void CopyTo(int index, T[] array, int arrayIndex, int count)
+        {
+            if(array == null)
+                throw new ArgumentNullException();
+            if (index < 0 || arrayIndex < 0 || count < 0)
+                throw new ArgumentOutOfRangeException();
+            if (index >= Count || array.Length - arrayIndex < Count - index)
+                throw new ArgumentException();
+
+            while (count != 0)
+            {
+                array[arrayIndex] = items[index];
+                arrayIndex++;
+                index++;
+                count--;
+            }
+        }
         public bool Remove(T item)
         {
             for(int i=0; i<items.Length; i++)
@@ -164,12 +195,15 @@ namespace Collection
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            for(int i=0; i<count; i++)
+            {
+                yield return items[i];
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return ((IEnumerable)this).GetEnumerator();
         }
 
     }
