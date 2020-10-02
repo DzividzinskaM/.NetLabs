@@ -80,9 +80,14 @@ namespace Collection
                 throw new ArgumentNullException();
             if (arrayIndex < 0)
                 throw new ArgumentOutOfRangeException();
-            if (array.Length - arrayIndex > items.Length)
+            if (array.Length - arrayIndex < Count)
                 throw new ArgumentException(); 
 
+            
+            for(int i=arrayIndex, j=0; i < array.Length; i++, j++)
+            {
+                array[i] = items[j];
+            }
            
         }
 
