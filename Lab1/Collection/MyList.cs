@@ -191,6 +191,42 @@ namespace Collection
 
         }
 
+        public void Sort()
+        {
+            T temp;
+            for (int i = 0; i < count-1; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    if (items[i].CompareTo(items[j])>0)
+                    {
+                        temp = items[i];
+                        items[i] = items[j];
+                        items[j] = temp;
+                    }
+                }
+            }
+        }
+
+        public void Sort(IComparer<T> comparer)
+        {
+            T temp;
+            for (int i = 0; i < count - 1; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    if (comparer.Compare(items[i], items[j]) > 0)
+                    {
+                        temp = items[i];
+                        items[i] = items[j];
+                        items[j] = temp;
+                    }
+                }
+            }
+        }
+
+
+
         public IEnumerator<T> GetEnumerator()
         {
             for(int i=0; i<count; i++)
