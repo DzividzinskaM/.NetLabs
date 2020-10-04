@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Collection
 {
     public class MyList<T> : IEnumerable<T>, ICollection<T>, IList<T>
+        where T : IComparable<T>
     {
         public int Capacity { get; set; }
         public int Count { get => count; }
@@ -16,7 +15,7 @@ namespace Collection
         private int count;
         private const int expandingValue = 2;   
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly { get => false; }
 
         public T this[int index]
         { 
@@ -30,6 +29,8 @@ namespace Collection
             { 
                 if (index < 0 || index >= count)
                     throw new ArgumentOutOfRangeException();
+                if (IsReadOnly)
+                    throw new NotSupportedException();
                 items[index] = value;
             } 
         }
@@ -50,6 +51,8 @@ namespace Collection
 
         public void Add(T item)
         {
+            if (IsReadOnly)
+                throw new NotSupportedException();
             if (count == Capacity)
                 Expand();
             items[count] = item;
@@ -70,6 +73,8 @@ namespace Collection
 
         public void Clear()
         {
+            if (IsReadOnly)
+                throw new NotSupportedException();
             count = 0;
         }
 
@@ -136,7 +141,9 @@ namespace Collection
 
         public bool Remove(T item)
         {
-            for(int i=0; i<items.Length; i++)
+            if (IsReadOnly)
+                throw new NotSupportedException();
+            for (int i=0; i<items.Length; i++)
             {
                 if (items[i].Equals(item))
                 {
@@ -163,6 +170,8 @@ namespace Collection
 
         public void Insert(int index, T item)
         {
+            if (IsReadOnly)
+                throw new NotSupportedException();
             if (index < 0 || index > Count)
                 throw new ArgumentOutOfRangeException();
 
@@ -180,6 +189,8 @@ namespace Collection
 
         public void RemoveAt(int index)
         {
+            if (IsReadOnly)
+                throw new NotSupportedException();
             if (index < 0 || index > Count)
                 throw new ArgumentOutOfRangeException();
 
@@ -241,29 +252,13 @@ namespace Collection
         }
 
 
-/*        public delegate void RemovingHandler(int index);
-        public event RemovingHandler removeItem;*/
+
+
+
+
 
         public delegate void AddingHandler(int index, T item);
         public event AddingHandler addItem;
-
-/*        private void checkIndex(int index)
-        {
-            if (index < 0 || index > Count)
-                throw new ArgumentOutOfRangeException();
-        }
-        private void RemoveElement(int index)
-        {
-            for (int i = index; i < items.Length - 1; i++)
-            {
-                items[i] = items[i + 1];
-            }
-        }
-        private void CountReduce(int index)
-        {
-            count--;
-        }*/
-
 
         private void checkIndex(int index, T item)
         {
@@ -288,20 +283,6 @@ namespace Collection
             count++;
         }
 
-/*
-        public void RemoveEvent(int index, T item = default(T))
-        {
-            Console.WriteLine(item);
-            if(removeItem == null)
-            {
-                removeItem += checkIndex;
-                removeItem += RemoveElement;
-                removeItem += CountReduce;
-            }
-            
-            removeItem(index);
-        }*/
-
         public void AddEvent(T item, int index = -1)
         {
             addItem = null;
@@ -323,10 +304,9 @@ namespace Collection
                 addItem(count, item);
             }
 
-            
-
         }
 
     }
+
    
 }
