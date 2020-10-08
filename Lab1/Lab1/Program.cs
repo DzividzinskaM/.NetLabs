@@ -130,6 +130,15 @@ namespace Lab1
             }
 
 
+            Console.WriteLine("---------------Event---------------");
+
+            lst.updateItemEvent += (source, e) =>
+            {
+                Console.WriteLine($"Update item - {e.Index}, old item - {e.OldItem}, new Item - {e.NewItem}");
+            };
+
+
+            lst.Update(1, 250);
             Console.ReadLine();
 
         }

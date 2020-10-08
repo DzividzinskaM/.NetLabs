@@ -6,7 +6,6 @@ using System.Collections.Generic;
 namespace Collection
 {
     public class MyList<T> : IEnumerable<T>, ICollection<T>, IList<T>
-        where T : IComparable<T>
     {
         public int Capacity { get; set; }
         public int Count { get => count; }
@@ -202,22 +201,6 @@ namespace Collection
 
         }
 
-        public void Sort()
-        {
-            T temp;
-            for (int i = 0; i < count-1; i++)
-            {
-                for (int j = i + 1; j < count; j++)
-                {
-                    if (items[i].CompareTo(items[j])>0)
-                    {
-                        temp = items[i];
-                        items[i] = items[j];
-                        items[j] = temp;
-                    }
-                }
-            }
-        }
 
         public void Sort(IComparer<T> comparer)
         {
@@ -257,43 +240,47 @@ namespace Collection
 
 
 
-        public delegate void AddingHandler(int index, T item);
-        public event AddingHandler addItem;
+/*        public delegate void AddingHandler(object sender, 
+            EventArgs<T> e);
+        public event AddingHandler addItem;*/
 
-        private void checkIndex(int index, T item)
+
+        public delegate void UpdatingHandler(object sender,
+           UpdateEventArgs<T> e);
+        public event UpdatingHandler updateItemEvent;
+
+        public void Update(int index, T newItem)
         {
-            if (index < 0 || index > Count)
+            if (index < 0 || index >= Count)
                 throw new ArgumentOutOfRangeException();
-        }
-        private void checkExpand(int index, T item)
-        {
-            if (count == Capacity)
-                Expand();
-        }
-        private void AddElement(int index, T item)
-        {
-            for (int i = count; i >= index; i--)
+            
+
+            if (updateItemEvent != null)
             {
-                items[i + 1] = items[i];
+                T oldItem = items[index];
+                items[index] = newItem;
+                UpdateEventArgs<T> args = new UpdateEventArgs<T>(oldItem, newItem, index);
+
+                updateItemEvent(this, args);
             }
-            items[index] = item;
-        }
-        private void CountExpanse(int index, T item)
-        {
-            count++;
         }
 
-        public void AddEvent(T item, int index = -1)
+        
+
+
+        
+
+        /*public void AddEvent(T item, int index = -1)
         {
             addItem = null;
-            if(index != -1)
+            if (index != -1)
             {
                 addItem += checkIndex;
                 addItem += checkExpand;
                 addItem += AddElement;
                 addItem += CountExpanse;
 
-                addItem(index, item);
+                addItem(this, new EventArgs<T>(item, index));
             }
             else
             {
@@ -301,11 +288,27 @@ namespace Collection
                 addItem += AddElement;
                 addItem += CountExpanse;
 
-                addItem(count, item);
+                addItem(this, new EventArgs<T>(item, count));
             }
 
-        }
+        }*/
 
+    }
+
+
+    public class UpdateEventArgs<T> : EventArgs
+    {
+        public T OldItem { get; }
+        public T NewItem { get; }
+
+        public int Index { get; }
+
+        public UpdateEventArgs(T oldItem, T newItem, int index)
+        {
+            OldItem = oldItem;
+            NewItem = newItem;
+            Index = index;
+        }
     }
 
    
