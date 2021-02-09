@@ -1,0 +1,13 @@
+.a_reset {
+    text-decoration: none;
+    color: white
+}
+
+.wrapper {
+   width: 500px;
+}
+
+.link:hover {
+    color: white;
+}
+
